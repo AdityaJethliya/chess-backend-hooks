@@ -24,7 +24,7 @@ io.on('connection', (socket) => {
             return callback(error)
         }
 
-        socket.broadcast.to(id.toString()).emit('message', { user: 'admin', text: `${user.name}, has joined.` })
+        // socket.broadcast.to(id.toString()).emit('message', { user: 'admin', text: `${user.name}, has joined.` })
 
         socket.join(id.toString())
         // console.log(id, player, position)
@@ -33,13 +33,12 @@ io.on('connection', (socket) => {
 
     socket.on('sendMessage', (message, callback) => {
         const user = getUser(socket.id);
-        io.to(user.gameId.toString()).emit('message', { user: user.name, text: message })
-
+        socket.broadcast.to(user.gameId.toString()).emit('message', { user: user.name, text: message })
         callback()
     })
 
     socket.on('move', (move) => {
-        io.to(move.gameId.toString()).emit('position', { position: move.position })
+        io.to(move.gameId.toString()).emit('position', { move: move.move })
     })
 
     socket.on('startgame', (id) => {
